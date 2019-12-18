@@ -8,15 +8,10 @@ var app = require('../app');
 var debug = require('debug')('chat-example-by-socket-io:server');
 var http = require('http');
 
-var io = require('socket.io')(http);
-
 /**
  * Get port from environment and store in Express.
  */
 
- io.on('connection', function(socket){
-   console.log('a user connected');
- })
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
@@ -26,6 +21,40 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+var io = require('socket.io')(server);
+
+io.on('connection', function (socket) {
+  console.log('a user connected');
+  // socket.emit('news', {hello: 'world'});
+  // socket.on('my other event', function(data){
+  //   console.log('my other event data:'+data);
+  // });
+
+  // io.emit('this', { will: 'be received by everyone' });
+  // socket.on('private message', function(from, msg){
+  //   console.log('I received a private message by ' ,from , ' saying ', msg);
+  // });
+
+  // socket.on('disconnect', function(){
+  //   io.emit('user disconnected');
+  // });
+  // sending and getting data(acknowledgements)
+  /** 
+   * Sometimes, you might want to get a callback when the client confirmed the message reception.
+   * To do this, simply pass a function as the last parameter 
+   * of  .send or .emit.
+   * What's more, when you use .emit, the acknowledge 
+   * is done by you, which means you can also pass data along:
+  */
+  socket.on('ferret', function (name, word, fn) {
+    fn(name + ' says ' + word);
+  });
+
+  socket.on('message', function(data){
+    console.log('www message data:', data);
+  });
+  socket.on('disconnect', function(){});
+});
 /**
  * Listen on provided port, on all network interfaces.
  */
