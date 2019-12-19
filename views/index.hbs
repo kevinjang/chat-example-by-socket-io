@@ -26,7 +26,7 @@
             message: $('#m').val()
         }
         messageList.push(item);
-        socket.send(item);
+        socket.send($('#m').val());
 
         $('#m').val('')
     }
